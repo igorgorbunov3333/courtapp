@@ -1,0 +1,22 @@
+version: '3'
+services:
+  postgres-court-service:
+    image: "ihorbunov/postgres:9"
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_PASSWORD=root'
+      - 'POSTGRES_DB=courts_db'
+
+  postgres-ingestion-service:
+    image: "ihorbunov/postgres:9"
+    ports:
+      - '5431:5431'
+    environment:
+      - 'POSTGRES_PASSWORD=root'
+      - 'POSTGRES_DB=ingestion_db'
+
+#  courthubmanagement:
+#    image: "ihorbunov/courthubmanagement:0.1.0"
+#    ports:
+#      - '8081:8081'
