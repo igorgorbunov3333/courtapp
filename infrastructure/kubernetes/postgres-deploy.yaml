@@ -1,0 +1,26 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  containers:
+    - name: postgres
+      image: ihorbunov/postgres:12
+      env:
+        - name: POSTGRES_PASSWORD
+          value: "root"
+        - name: POSTGRES_DB
+          value: "courts_db"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+            

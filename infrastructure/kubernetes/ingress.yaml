@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: chmgmt-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/auth-url: "https://a5d01ecad38e.ngrok.io/auth"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  tls:
+    - hosts:
+        - 0e66cafbd643.ngrok.io
+      secretName: echo-tls
+  rules:
+    - http:
+        paths:
+        - backend:
+            serviceName: chmgmt
+            servicePort: 8081
+          path: /chmanagement(/|$)(.*)

@@ -3,7 +3,7 @@ services:
   postgres-court-service:
     image: "ihorbunov/postgres:9"
     ports:
-      - '5432:5432'
+      - 5961:5432
     environment:
       - 'POSTGRES_PASSWORD=root'
       - 'POSTGRES_DB=courts_db'
@@ -11,7 +11,7 @@ services:
   postgres-ingestion-service:
     image: "ihorbunov/postgres:9"
     ports:
-      - '5431:5431'
+      - 5105:5432
     environment:
       - 'POSTGRES_PASSWORD=root'
       - 'POSTGRES_DB=ingestion_db'

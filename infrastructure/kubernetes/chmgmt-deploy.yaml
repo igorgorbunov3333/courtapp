@@ -1,0 +1,20 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: chmgmt
+  labels:
+    app: chmgmt
+spec:
+  containers:
+    - name: chmgmt
+      image: ihorbunov/courthubmanagement:0.1.1
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: chmgmt
+spec:
+  selector:
+    app: chmgmt
+  ports:
+    - port: 8081

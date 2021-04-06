@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: ihorbunov/postgres
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name:
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: LoadBalancer
+  port: 5432
+
+ingress:
+  enabled: false
+  annotations: {}
+
+postgres:
+  password: root
+  database: courts
