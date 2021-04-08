@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class XmlProcessorServiceImpl implements XmlProcessorService {
 
-    private RegulatoryDocumentTypeRepository regulatoryDocumentTypeRepository;
+    private final RegulatoryDocumentTypeRepository regulatoryDocumentTypeRepository;
 
     @Override
     public void process(InputStream inputStream) throws IOException {
