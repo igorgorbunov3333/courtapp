@@ -4,6 +4,8 @@ services:
     image: "ihorbunov/postgres:9"
     ports:
       - 5961:5432
+    volumes:
+      - courts-db:/var/lib/postgresql
     environment:
       - 'POSTGRES_PASSWORD=root'
       - 'POSTGRES_DB=courts_db'
@@ -12,11 +14,11 @@ services:
     image: "ihorbunov/postgres:9"
     ports:
       - 5105:5432
+    volumes:
+      - ingestion-db:/var/lib/postgresql
     environment:
       - 'POSTGRES_PASSWORD=root'
       - 'POSTGRES_DB=ingestion_db'
-
-#  courthubmanagement:
-#    image: "ihorbunov/courthubmanagement:0.1.0"
-#    ports:
-#      - '8081:8081'
+volumes:
+  courts-db:
+  ingestion-db:
