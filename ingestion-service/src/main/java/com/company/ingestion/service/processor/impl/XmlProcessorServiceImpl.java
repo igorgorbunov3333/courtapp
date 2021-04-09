@@ -1,6 +1,8 @@
 package com.company.ingestion.service.processor.impl;
 
 import com.company.ingestion.domain.entity.RegulatoryDocumentType;
+import com.company.ingestion.domain.xml.Document;
+import com.company.ingestion.domain.xml.Item;
 import com.company.ingestion.domain.xml.Rna;
 import com.company.ingestion.repository.RegulatoryDocumentTypeRepository;
 import com.company.ingestion.service.processor.XmlProcessorService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,16 +34,31 @@ public class XmlProcessorServiceImpl implements XmlProcessorService {
         xml = xml.replace("\n", "").replace("\t", "");
         Rna rna = xmlMapper.readValue(xml, Rna.class);
 
-        List<RegulatoryDocumentType> regularDocumentTypes = rna.getDatabase().stream()
+        List<Document> documents = rna.getDatabase().stream()
                 .flatMap(database -> database.getDocument().stream())
-                .flatMap(document -> document.getItem().stream())
-                .filter(item -> "type".equals(item.getName()))
-                .map(item -> item.getText().getValue())
-                .distinct()
-                .map(docType -> new RegulatoryDocumentType(null, docType))
                 .collect(Collectors.toList());
 
-        regulatoryDocumentTypeRepository.saveAll(regularDocumentTypes);
+        List<RegulatoryDocumentType> regulatoryDocumentTypesToSave = new ArrayList<>();
+        for (Document document : documents) {
+            List<Item> items = document.getItem();
+            String type = null;
+            String name = null;
+            for (Item item : items) {
+                if ("type".equals(item.getName())) {
+                    type = item.getText().getValue();
+                } else if ("name".equals(item.getName())) {
+                    name = item.getText().getValue();
+                }
+            }
+            regulatoryDocumentTypesToSave.add(new RegulatoryDocumentType(null, type, name));
+        }
+
+        List<RegulatoryDocumentType> notNullableRegulatoryDocumentTypes = regulatoryDocumentTypesToSave.stream()
+                .filter(doc -> doc.getName() != null)
+                .filter(doc -> doc.getType() != null)
+                .collect(Collectors.toList());
+
+        regulatoryDocumentTypeRepository.saveAll(notNullableRegulatoryDocumentTypes);
     }
 
 }

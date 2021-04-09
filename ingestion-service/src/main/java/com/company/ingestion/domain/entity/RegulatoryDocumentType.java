@@ -1,6 +1,8 @@
 package com.company.ingestion.domain.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 @Entity
+@Getter
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class RegulatoryDocumentType {
 
     @Id
@@ -20,4 +24,7 @@ public class RegulatoryDocumentType {
 
     @Column(nullable = false)
     private String type;
+
+    @Column(nullable = false)
+    private String name;
 }
