@@ -1,0 +1,15 @@
+server:
+  port: 8081
+spring:
+  servlet.multipart:
+    max-file-size: 150MB
+    max-request-size: 150MB
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5105/ingestion_db
+    username: postgres
+    password: root
+  liquibase.change-log: classpath:db/changelog/db.changelog-master.yaml
