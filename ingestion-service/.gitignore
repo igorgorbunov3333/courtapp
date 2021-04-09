@@ -4,6 +4,8 @@
 */target
 *.tgz
 
+target
+
 */*.iml
 *.iml
 .idea/*
