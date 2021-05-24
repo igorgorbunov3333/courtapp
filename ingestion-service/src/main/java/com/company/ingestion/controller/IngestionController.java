@@ -13,7 +13,7 @@ import java.io.InputStream;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/upload")
+@RequestMapping("/api/v1/documents")
 public class IngestionController {
 
     private final IngestionService ingestionService;
