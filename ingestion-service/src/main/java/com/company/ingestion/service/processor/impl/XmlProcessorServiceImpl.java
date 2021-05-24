@@ -58,6 +58,8 @@ public class XmlProcessorServiceImpl implements XmlProcessorService {
                 .filter(doc -> doc.getType() != null)
                 .collect(Collectors.toList());
 
+        regulatoryDocumentTypeRepository.deleteAll();
+        regulatoryDocumentTypeRepository.flush();
         regulatoryDocumentTypeRepository.saveAll(notNullableRegulatoryDocumentTypes);
     }
 

@@ -1,4 +1,4 @@
-package com.company.ingestion.service.cash;
+package com.company.ingestion.service.cache;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;

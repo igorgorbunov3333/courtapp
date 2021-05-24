@@ -2,15 +2,22 @@ package com.company.ingestion.service.processor.impl;
 
 import com.company.ingestion.domain.RegulatoryDocumentAbbreviation;
 import com.company.ingestion.domain.dto.DocumentDataDto;
+import com.company.ingestion.domain.entity.RegulatoryDocumentType;
+import com.company.ingestion.repository.RegulatoryDocumentTypeRepository;
+import com.company.ingestion.service.cache.Cache;
 import com.company.ingestion.service.processor.RtfProcessorService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class RtfProcessorServiceImpl implements RtfProcessorService {
@@ -21,6 +28,12 @@ public class RtfProcessorServiceImpl implements RtfProcessorService {
     private static final String PARAGRAPH_PREFIX_ARTICLE_NUMBER_REGULATORY_DOC = PARAGRAPH_PREFIX_ARTICLE_NUMBER + REGULATORY_DOC;
 
     private static final String EMPTY_STRING = "";
+    private static final String KEY_REGULATORY_DOCUMENT = "document";
+
+    private Cache<String, List<RegulatoryDocumentType>> cache;
+
+    @Autowired
+    private RegulatoryDocumentTypeRepository regulatoryDocumentTypeRepository;
 
     @Override
     public DocumentDataDto process(String document) {
@@ -61,16 +74,26 @@ public class RtfProcessorServiceImpl implements RtfProcessorService {
     private Map<String, String> processRow(String row) {
         Map<String, String> articlesToRegulatoryDocuments = new HashMap<>();
         Matcher articleWithNextWordMatcher = getMatcher(row, PARAGRAPH_PREFIX_ARTICLE_NUMBER_REGULATORY_DOC);
+
+        cache = new Cache<>(regulatoryDocumentTypeRepository::findAll);
+        Set<String> availableRegulatoryDocuments = getAvailableRegulatoryDocuments();
         while (articleWithNextWordMatcher.find()) {
             String articleWithNextWord = articleWithNextWordMatcher.group();
             String articleNumber = findArticleNumber(articleWithNextWord);
             if (!articleNumber.isBlank()) {
                 String articleNumberWithoutSpaces = articleNumber.replaceAll(" ", "");
-                String regulatoryDocument = findRegulatoryDocument(articleWithNextWord);
+                String regulatoryDocument = findRegulatoryDocument(articleWithNextWord, availableRegulatoryDocuments);
                 articlesToRegulatoryDocuments.put(articleNumberWithoutSpaces, regulatoryDocument);
             }
         }
         return articlesToRegulatoryDocuments;
+    }
+
+    private Set<String> getAvailableRegulatoryDocuments() {
+        List<RegulatoryDocumentType> regulatoryDocumentTypes = cache.get(KEY_REGULATORY_DOCUMENT);
+        return regulatoryDocumentTypes.stream()
+                .map(RegulatoryDocumentType::getType)
+                .collect(Collectors.toSet());
     }
 
     private String findArticleNumber(String articleWithNextWord) {
@@ -81,10 +104,16 @@ public class RtfProcessorServiceImpl implements RtfProcessorService {
         return EMPTY_STRING;
     }
 
-    private String findRegulatoryDocument(String articleWithNextWord) {
+    private String findRegulatoryDocument(String articleWithNextWord, Set<String> availableRegulatoryDocuments) {
         Matcher nextWordMatcher = getMatcher(articleWithNextWord, REGULATORY_DOC_END_OF_STRING);
         if (nextWordMatcher.find()) {
             String nextWord = nextWordMatcher.group();
+
+            for (String regulatoryDocument : availableRegulatoryDocuments) {
+                if (regulatoryDocument.startsWith(nextWord)) {
+
+                }
+            }
             Optional<RegulatoryDocumentAbbreviation> regulatoryDocument = RegulatoryDocumentAbbreviation.of(nextWord);
             if (regulatoryDocument.isPresent()) {
                 return regulatoryDocument.get().toString();
